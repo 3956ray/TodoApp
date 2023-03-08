@@ -6,6 +6,32 @@
       <div class="cardBox">
         <div class="container">
           <h2>My tasks</h2>
+          <hr />
+
+          <div class="col-4">
+            <input 
+            v-model="hideDone"
+            type="checkbox"
+            id="hideDone"
+            name="hideDone">
+
+            <label for="hideDone">Hide Done Tasks</label>
+          </div>
+          <div class="col-4">
+            <input 
+            v-model="reverse"
+            type="checkbox"
+            id="reverse"
+            name="reverse">
+            <label for="reverse">Reverse list order</label>
+          </div><div class="col-4">
+            <input 
+            v-model="sortById"
+            type="checkbox"
+            id="sortById"
+            name="sortById">
+            <label for="sortById">sort by ID</label>
+          </div>
           <ul class="taskList">
             <li v-for='(taskItem, index) in displayList' :key='`${index}_${Math.random()}`'>
               <input type="checkbox" :checked='!!taskItem.finishedAt' @input="changeStatus(taskItem.id)" />
@@ -33,6 +59,9 @@ export default {
 
   data: () => ({
     taskList: [],
+    hideDone: false,
+    reverse: false,
+    sortById: false,
   }),
 
   // pass the calue to the template
@@ -51,15 +80,25 @@ export default {
     },
     // 
     filterList() {
-      return [...this.baseList].filter(t => !t.finishedAt);
+      return this.hideDone
+        ? [...this.baseList].filter(t => !t.finishedAt)
+        : [...this.baseList];
     },
-    // ascending order
+    // control order type
     sortedList() {
-      return [...this.filterList].sort((a, b) => a.id - b.id);
+      return [...this.filterList]
+        .sort((a, b) => (
+          this.sortById
+            ? b.id - a.id
+            : (a.finishedAt || 0) - (b.finishedAt || 0)));
     },
 
     displayList() {
-      return this.sortedList;
+    const list = this.sortedList;
+
+      return this.reverse
+        ? list.reverse()
+        : list;
     },
   },
 
