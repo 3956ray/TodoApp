@@ -35,6 +35,8 @@ export default {
     taskList: [],
   }),
   // pass the calue to the template
+  // value is cached so we don't worry value can be changed in template.
+  // not waste processing time re-rendering DOM tree
   computed: {
     displayList() {
       return this.taskList;
