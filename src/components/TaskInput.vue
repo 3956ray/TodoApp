@@ -22,9 +22,7 @@ export default {
             this.$emit('add-task', this.task);
             this.task = '';
         },
-
-
-    }
+    },
 }
 </script>
 
