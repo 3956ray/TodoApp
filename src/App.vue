@@ -9,31 +9,20 @@
           <hr />
 
           <div class="col-4">
-            <input 
-            v-model="hideDone"
-            type="checkbox"
-            id="hideDone"
-            name="hideDone">
-
+            <input v-model="hideDone" type="checkbox" id="hideDone" name="hideDone">
             <label for="hideDone">Hide Done Tasks</label>
           </div>
           <div class="col-4">
-            <input 
-            v-model="reverse"
-            type="checkbox"
-            id="reverse"
-            name="reverse">
+            <input v-model="reverse" type="checkbox" id="reverse" name="reverse">
             <label for="reverse">Reverse list order</label>
-          </div><div class="col-4">
-            <input 
-            v-model="sortById"
-            type="checkbox"
-            id="sortById"
-            name="sortById">
+          </div>
+          <div class="col-4">
+            <input v-model="sortById" type="checkbox" id="sortById" name="sortById">
             <label for="sortById">sort by ID</label>
           </div>
           <ul class="taskList">
-            <li v-for='(taskItem, index) in displayList' :key='`${index}_${Math.random()}`'>
+            <li v-for='(taskItem, index) in displayList' :key='`${index}_${Math.random()}`'
+              :class="!!taskItem.finishedAt ? 'taskDone' : ''">
               <input type="checkbox" :checked='!!taskItem.finishedAt' @input="changeStatus(taskItem.id)" />
 
               # {{ taskItem.id }} - {{ taskItem.task }}
@@ -94,7 +83,7 @@ export default {
     },
 
     displayList() {
-    const list = this.sortedList;
+      const list = this.sortedList;
 
       return this.reverse
         ? list.reverse()
@@ -156,6 +145,32 @@ export default {
 
 <style scoped>
 .taskList li {
+  list-style: none;
   text-align: left;
+  padding: 5px 10px;
+  border-bottom: 1px solid rgba(0, 0 green, 0 blue, 0.15alpha);
+}
+
+.taskList li:last-child {
+  border-bottom: 0px;
+}
+
+.taskList li:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+@keyframes colorChange {
+  from {
+    background-color: inherit;
+  }
+
+  to {
+    background-color: rgba(0, 160, 24, 0.577);
+  }
+}
+
+.taskList li.taskDone {
+  animation: colorChange 1s ease;
+  background-color: rgba(0, 160, 24, 0.577);
 }
 </style>
