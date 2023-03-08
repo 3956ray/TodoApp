@@ -8,10 +8,10 @@
           <h2>My tasks</h2>
           <ul class="taskList">
             <li v-for='(taskItem, index) in displayList' :key='`${index}_${Math.random()}`'>
-              <input type="checkbox" :checked='!!taskItem.finishedAt' @input='changeStatus(index)' />
+              <input type="checkbox" :checked='!!taskItem.finishedAt' @input="changeStatus(taskItem.id)" />
 
-              {{ taskItem.task }}
-              <span v-if='taskItem.finishedAt'>{{ formatDate(taskItem.finishedAt) }}</span>
+              # {{ taskItem.id }} - {{ taskItem.task }}
+              <span v-if='taskItem.finishedAt'>Done at {{ formatDate(taskItem.finishedAt) }}</span>
             </li>
           </ul>
         </div>
@@ -34,12 +34,32 @@ export default {
   data: () => ({
     taskList: [],
   }),
+
   // pass the calue to the template
   // value is cached so we don't worry value can be changed in template.
   // not waste processing time re-rendering DOM tree
   computed: {
+
+    // new array with same task
+    // add new "id" property to the task
+    baseList() {
+      return [...this.taskList]
+        .map((t, index) => ({
+          ...t,
+          id: index + 1
+        }));
+    },
+    // 
+    filterList() {
+      return [...this.baseList].filter(t => !t.finishedAt);
+    },
+    // ascending order
+    sortedList() {
+      return [...this.filterList].sort((a, b) => a.id - b.id);
+    },
+
     displayList() {
-      return this.taskList;
+      return this.sortedList;
     },
   },
 
@@ -47,21 +67,21 @@ export default {
     formatDate(value) {
       if (!value)
         return '';
-      if(typeof value !== 'number')
+      if (typeof value !== 'number')
         return value;
-        const browserLocale =
-                navigator.languages && navigator.languages.length
-                    ? navigator.languages[0]
-                    : navigator.language;
+      const browserLocale =
+        navigator.languages && navigator.languages.length
+          ? navigator.languages[0]
+          : navigator.language;
 
-            const intlDateTime = new Intl.DateTimeFormat(browserLocale, {
-                year: "numeric",
-                month: "numeric",
-                day: "numeric",
-                hour: "numeric",
-                minute: "numeric",
-            });
-            return intlDateTime.format(new Date());
+      const intlDateTime = new Intl.DateTimeFormat(browserLocale, {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+      });
+      return intlDateTime.format(new Date());
     },
 
     addNewTask(task) {
@@ -72,8 +92,8 @@ export default {
       })
     },
 
-    changeStatus(taskIndex) {
-      const task = this.taskList[taskIndex];
+    changeStatus(taskID) {
+      const task = this.taskList[taskID - 1];
       if (task.finishedAt) {
         task.finishedAt = undefined;
       } else {
