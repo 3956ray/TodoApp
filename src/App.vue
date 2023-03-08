@@ -7,13 +7,8 @@
         <div class="container">
           <h2>My tasks</h2>
           <ul class="taskList">
-            <li v-for='(taskItem, index) in taskList' 
-            :key='`${index}_${Math.random()}`'>
-              <input 
-              type="checkbox" 
-              :checked='!!taskItem.finishedAt' 
-              @input='changeStatus(index)' 
-              />
+            <li v-for='(taskItem, index) in displayList' :key='`${index}_${Math.random()}`'>
+              <input type="checkbox" :checked='!!taskItem.finishedAt' @input='changeStatus(index)' />
 
               {{ taskItem.task }}
               <!-- <span v-if='taskItem.finishedAt'>{{ taskItem.finishedAt }}</span> -->
@@ -39,6 +34,12 @@ export default {
   data: () => ({
     taskList: [],
   }),
+  // pass the calue to the template
+  computed: {
+    displayList() {
+      return this.taskList;
+    },
+  },
 
   methods: {
     addNewTask(task) {
@@ -73,7 +74,7 @@ export default {
 </style>
 
 <style scoped>
-.taskList li{
+.taskList li {
   text-align: left;
 }
 </style>
